@@ -1,0 +1,149 @@
+* {
+  background-color: #282726;
+}
+
+.headline {
+  color: #f9f4d4;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  align-items: center;
+}
+
+.title-headline {
+  font-weight: 500;
+  font-size: 20px;
+}
+.parag-headline {
+  font-weight: 100;
+  color: #8e8e8e;
+  font-size: 14px;
+  width: 300px;
+}
+
+.language-button {
+  width: 100%; /* dugme zauzima punu širinu roditelja */
+  letter-spacing: 1px;
+  font-weight: 700;
+  font-size: 12px;
+  margin: 1px 0;
+  padding: 5px 10px;
+  display: flex;
+  flex-direction: column; /* tekst iznad, ikona ispod */
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  border: none;
+  border-radius: 3px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.icon-head {
+  width: 100%; /* zauzima istu širinu kao dugme */
+  background-color: #1c1a1a94;
+  padding: 5px 0;
+  border-radius: 3px;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 16px;
+  position: relative; /* ne koristiti fixed, jer fiksira na ekran */
+}
+.language-div {
+  display: flex;
+}
+.language-button,
+.icon-head {
+  width: 100%;
+  letter-spacing: 1px;
+  font-weight: 700;
+  gap: 8px;
+  font-size: 12px;
+  margin: 1px;
+  padding: 5px 10px 5px 10px;
+  display: flex;
+  border: none;
+  border-radius: 3px;
+  justify-content: center;
+  text-align: center;
+  align-items: center;
+}
+.icon-head {
+  width: 20px;
+  background-color: #1c1a1a94;
+  position: absolute;
+}
+
+.list-languages {
+  margin: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  width: 350px;
+
+  justify-content: center;
+  text-align: center;
+  align-items: center;
+}
+.game-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  align-items: center;
+}
+.message {
+  justify-content: center;
+  text-align: center;
+  align-items: center;
+  display: flex;
+  margin: 20px;
+  width: 352px;
+  height: 59px;
+  border: 2px dashed #323232;
+  background-color: #7a5ea7;
+  color: #f9f4da;
+}
+.letter-button {
+  margin: 2px;
+  font-weight: 600;
+  width: 40px;
+  height: 40px;
+  border: 1px solid #d7d7d7;
+  border-radius: 4px;
+}
+.letter-button:hover {
+  cursor: pointer;
+}
+.list-letters {
+  margin: 10px;
+  width: 480px;
+}
+.found-letter-button {
+  margin: 2px;
+  font-weight: bold;
+  width: 40px;
+  height: 40px;
+  font-size: 18px;
+  background-color: #323232;
+  color: #f9f4da;
+  border: none;
+  border-bottom: 1px solid #f9f4da;
+}
+.list-letters-word {
+  padding-bottom: 20px;
+  margin: 15px;
+}
+.new-game-button {
+  letter-spacing: 1px;
+  margin-top: 20px;
+  background-color: #11b5e5;
+  border: 1px solid #d7d7d7;
+  width: 228px;
+  height: 40px;
+  font-weight: 600;
+  font-size: 16px;
+  border-radius: 4px;
+}
