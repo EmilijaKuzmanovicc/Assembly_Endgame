@@ -1,3 +1,3 @@
-export default function GetRandomNumer() {
-  return Math.floor(Math.random() * 482);
+export default function GetRandomNumer(num) {
+  return Math.floor(Math.random() * num);
 }

@@ -1,6 +1,9 @@
 * {
   background-color: #282726;
 }
+body {
+  font-family: "Hanken Grotesk", sans-serif;
+}
 
 .headline {
   color: #f9f4d4;
@@ -57,23 +60,22 @@
 }
 .language-button,
 .icon-head {
-  width: 100%;
+  border: none;
   letter-spacing: 1px;
   font-weight: 700;
   gap: 8px;
   font-size: 12px;
+  font-family: "Hanken Grotesk", sans-serif;
   margin: 1px;
   padding: 5px 10px 5px 10px;
   display: flex;
-  border: none;
   border-radius: 3px;
   justify-content: center;
   text-align: center;
   align-items: center;
 }
 .icon-head {
-  width: 20px;
-  background-color: #1c1a1a94;
+  background-color: #1c1a1a89;
   position: absolute;
 }
 
@@ -99,12 +101,25 @@
   text-align: center;
   align-items: center;
   display: flex;
+  flex-direction: column;
+  display: flex;
   margin: 20px;
   width: 352px;
   height: 59px;
-  border: 2px dashed #323232;
-  background-color: #7a5ea7;
+  border-radius: 4px;
+  /* border: 2px dashed #323232; */
+  /* background-color: #7a5ea7; */
   color: #f9f4da;
+}
+.finish-text {
+  font-weight: 500;
+  font-size: 20px;
+  background-color: transparent;
+}
+.finish-message {
+  font-weight: 500;
+  font-size: 16px;
+  background-color: transparent;
 }
 .letter-button {
   margin: 2px;
