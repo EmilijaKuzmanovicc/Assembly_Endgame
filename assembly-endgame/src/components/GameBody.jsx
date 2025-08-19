@@ -12,73 +12,61 @@ import ReactConfetti from "react-confetti";
 import GetNewWord from "./GetNewWord";
 
 export default function GameBody() {
+  const listOfLetters = letters.map((letter) => ({ id: nanoid(), letter, isOn: false, isFound: 0 }));
   const [foundedState, setFoundedState] = React.useState(-1);
   const [foundedWord, setFoundedWord] = React.useState(false);
 
-  const [languagesState, setLanguagesState] = React.useState(languages.map((prev) => ({ ...prev, found: false })));
-  const listLanguages = languagesState.map((languageObj) => <Language key={languageObj.id} color={languageObj.color} name={languageObj.name} backgroundColor={languageObj.backgroundColor} found={languageObj.found} />);
+  const [gameState, setGameState] = React.useState({
+    languages: languages.map((prev) => ({ ...prev, found: false })),
+    currentWord: GetNewWord(),
+    letters: listOfLetters,
+  });
 
-  const [currentWord, setCurrentWord] = React.useState(GetNewWord());
-  const listLetersWord = currentWord.map((currentlLetter) => <FoundLetter key={currentlLetter.id} letter={currentlLetter.letter} showLetter={currentlLetter.showLetter} color={currentlLetter.color} />);
+  const listLanguages = gameState.languages.map((languageObj) => <Language key={languageObj.id} color={languageObj.color} name={languageObj.name} backgroundColor={languageObj.backgroundColor} found={languageObj.found} />);
 
-  const [lettersState, setLettersState] = React.useState(letters.map((letter) => ({ id: nanoid(), letter, isOn: false, isFound: 0 })));
-  const listLetters = lettersState.map((letterObj) => <Letter key={letterObj.id} id={letterObj.id} letter={letterObj.letter} isOn={letterObj.isOn} func={() => SwitchButton(letterObj.id)} isFound={letterObj.isFound} />);
+  const listLetersWord = gameState.currentWord.map((currentlLetter) => <FoundLetter key={currentlLetter.id} letter={currentlLetter.letter} showLetter={currentlLetter.showLetter} color={currentlLetter.color} />);
+
+  const listLetters = gameState.letters.map((letterObj) => <Letter key={letterObj.id} id={letterObj.id} letter={letterObj.letter} isOn={letterObj.isOn} func={() => SwitchButton(letterObj.id)} isFound={letterObj.isFound} />);
 
   React.useEffect(() => {
-    if (foundedState > -1) {
-      setLanguagesState((prev) => prev.map((lang) => (lang.id === foundedState ? { ...lang, found: true } : lang)));
-    }
-    if (foundedState === 8) {
-      setCurrentWord((prev) => {
-        return prev.map((curr) => {
-          return curr.showLetter ? curr : { ...curr, showLetter: true, color: "#ff0000" };
-        });
-      });
-    }
+    if (foundedState > -1) setGameState((prev) => ({ ...prev, languages: prev.languages.map((lang) => (lang.id === foundedState ? { ...lang, found: true } : lang)) }));
+
+    if (foundedState === 8) setGameState((prev) => ({ ...prev, currentWord: prev.currentWord.map((curr) => (curr.showLetter ? curr : { ...curr, showLetter: true, color: "#ff0000" })) }));
   }, [foundedState]);
 
   React.useEffect(() => {
-    if (currentWord.every((e) => e.showLetter === true)) setFoundedWord(true);
-  }, [currentWord]);
+    const numFound = gameState.currentWord.every((e) => e.showLetter === true);
+    if (numFound) setFoundedWord(true);
+  }, [gameState.currentWord]);
 
   function SwitchButton(id) {
     if (foundedState !== 8 || !foundedWord) {
-      setLettersState((prev) => {
-        return prev.map((currLetter) => {
-          return currLetter.id === id ? { ...currLetter, isOn: !currLetter.isOn, isFound: currLetter.isFound !== Compare(currLetter.letter, currentWord) ? Compare(currLetter.letter, currentWord) : currLetter.isFound } : currLetter;
-        });
+      setGameState((prev) => {
+        const updatedLetters = prev.letters.map((currLetter) => (currLetter.id === id ? { ...currLetter, isOn: !currLetter.isOn, isFound: currLetter.isFound !== Compare(currLetter.letter, prev.currentWord) ? Compare(currLetter.letter, prev.currentWord) : currLetter.isFound } : currLetter));
+
+        const letterToFound = prev.letters.find((e) => e.id === id);
+        const compareLetters = Compare(letterToFound.letter, prev.currentWord);
+
+        let updatedWord = prev.currentWord;
+        if (compareLetters === 1) {
+          updatedWord = prev.currentWord.map((currLetterWord) => (currLetterWord.letter === letterToFound.letter ? { ...currLetterWord, showLetter: true } : currLetterWord));
+        } else if (compareLetters === 2) {
+          setFoundedState((prevState) => prevState + 1);
+        }
+
+        return { ...prev, letters: updatedLetters, currentWord: updatedWord };
       });
     }
-    setCurrentWord((prev) => {
-      const letterToFound = lettersState.find((e) => e.id === id);
-      const compareLetters = Compare(letterToFound.letter, prev);
-
-      if (compareLetters === 1) return prev.map((currLetterWord) => (currLetterWord.letter === letterToFound.letter ? { ...currLetterWord, showLetter: true } : currLetterWord));
-      else if (compareLetters === 2) setFoundedState((prev) => prev + 1);
-
-      return prev;
-    });
-    setFoundedState((prev) => {
-      const letterObj = lettersState.find((l) => l.id === id);
-      if (!letterObj) return prev;
-      const compareResult = Compare(letterObj.letter, currentWord);
-      return compareResult ? prev : prev + 1;
-    });
   }
 
   function restartGame() {
     setFoundedState(-1);
-    setLanguagesState(languages.map((lang) => ({ ...lang, found: false })));
-    setCurrentWord(GetNewWord());
-    setLettersState(
-      letters.map((letter) => ({
-        id: nanoid(),
-        letter,
-        isOn: false,
-        isFound: 0,
-      }))
-    );
     setFoundedWord(false);
+    setGameState({
+      languages: languages.map((lang) => ({ ...lang, found: false })),
+      currentWord: GetNewWord(),
+      letters: listOfLetters,
+    });
   }
 
   function guessWord(foundedState, foundedWord) {
