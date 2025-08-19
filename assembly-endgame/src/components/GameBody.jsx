@@ -10,6 +10,7 @@ import { languages } from "../data/languages";
 import FinishGameText from "./FinishGameText";
 import ReactConfetti from "react-confetti";
 import GetNewWord from "./GetNewWord";
+
 export default function GameBody() {
   const [foundedState, setFoundedState] = React.useState(-1);
   const [foundedWord, setFoundedWord] = React.useState(false);
@@ -37,28 +38,33 @@ export default function GameBody() {
   }, [foundedState]);
 
   React.useEffect(() => {
-    const numFound = currentWord.every((e) => e.showLetter === true);
-    if (numFound) setFoundedWord(true);
+    if (currentWord.every((e) => e.showLetter === true)) setFoundedWord(true);
   }, [currentWord]);
 
   function SwitchButton(id) {
-    if (foundedState !== 8 || !foundedWord) {
-      setLettersState((prev) => {
-        return prev.map((currLetter) => {
-          return currLetter.id === id ? { ...currLetter, isOn: !currLetter.isOn, isFound: currLetter.isFound !== Compare(currLetter.letter, currentWord) ? Compare(currLetter.letter, currentWord) : currLetter.isFound } : currLetter;
-        });
+    if (foundedState === 8 || foundedWord) return;
+
+    setLettersState((prev) => {
+      return prev.map((currLetter) => {
+        const compared = Compare(currLetter.letter, currentWord) ? 1 : 2;
+        return currLetter.id === id ? { ...currLetter, isOn: !currLetter.isOn, isFound: currLetter.isFound !== compared ? compared : currLetter.isFound } : currLetter;
       });
+    });
 
-      setCurrentWord((prev) => {
-        const letterToFound = lettersState.find((e) => e.id === id);
-        const compareLetters = Compare(letterToFound.letter, prev);
+    setCurrentWord((prev) => {
+      const letterToFound = lettersState.find((e) => e.id === id);
+      const compareLetters = Compare(letterToFound.letter, prev);
 
-        if (compareLetters === 1) return prev.map((currLetterWord) => (currLetterWord.letter === letterToFound.letter ? { ...currLetterWord, showLetter: true } : currLetterWord));
-        else if (compareLetters === 2) setFoundedState((prev) => prev + 1);
-
-        return prev;
-      });
-    }
+      if (compareLetters) return prev.map((currLetterWord) => (currLetterWord.letter === letterToFound.letter ? { ...currLetterWord, showLetter: true } : currLetterWord));
+      setFoundedState((prev) => prev + 1);
+      return prev;
+    });
+    setFoundedState((prev) => {
+      const letterObj = lettersState.find((l) => l.id === id);
+      if (!letterObj) return prev;
+      const compareResult = Compare(letterObj.letter, currentWord);
+      return compareResult ? prev : prev + 1;
+    });
   }
   function restartGame() {
     setFoundedState(-1);
