@@ -1,5 +1,6 @@
 import { languages } from "../../data/languages"
 import { letters } from "../../data/letter"
+import Compare from "../Functions/Comare"
 import GetNewWord from "../Functions/GetNewWord"
 import { nanoid } from "nanoid"
 export const INITIAL_STATE = {
@@ -10,6 +11,15 @@ export const INITIAL_STATE = {
     letters: letters.map((letter) => ({ id: nanoid(), letter, isOn: false, isFound: 0 })),
 }
 
+const getNewLetters = (state, id) => state.letters.map(letter => {
+    const comparedValue = Compare(letter.letter, state.currentWord)
+    if (letter.id !== id) return letter
+    return {
+        ...letter,
+        isOn: !letter.isOn,
+        isFound: letter.isFound !== comparedValue ? comparedValue : letter.isFound,
+    }
+})
 export const gameReducer = (state, action) => {
     switch (action.type) {
         case "FOUNDED_WORD":
@@ -17,35 +27,37 @@ export const gameReducer = (state, action) => {
                 ...state,
                 foundedWord: true
             }
-        case "FOUNDED_STATE":
-            return {
-                ...state,
-                foundedState: state.foundedState + 1,
-            }
-        case "LANGUAGES":
-            return {
-                ...state,
-                languages: state.languages.map((l) =>
-                    l.id === action.payload.id ? action.payload : l
-                ),
+        case "LETTER_HIT": {
+            const newLetters = getNewLetters(state, action.id)
+            const newCurrentWord = state.currentWord.map(current => {
+                if (action.clickedLetter.letter === current.letter)
+                    if (state.foundedState === 8) {
+                        if (!current.showLetter)
+                            return { ...current, showLetter: true, color: "#ff0000" }
 
-            }
-        case "CURRENT_WORD":
-            return {
-                ...state,
-                currentWord: state.currentWord.map((c) =>
-                    c.id === action.payload.id ? action.payload : c
-                ),
+                    } else
+                        return { ...current, showLetter: true }
+                return current
+            })
 
-            }
-        case "LETTERS":
-            return {
-                ...state,
-                letters: state.letters.map((l) =>
-                    l.id === action.payload.id ? action.payload : l
-                ),
 
+            return { ...state, letters: newLetters, currentWord: newCurrentWord }
+
+        }
+        case "LETTER_MISS": {
+
+            const newLettersList = getNewLetters(state, action.id)
+
+            const newLanguagesList = state.languages.map(language => {
+                if (language.id === state.foundedState + 1)
+                    return { ...language, found: true }
+                return language
             }
+            )
+            return { ...state, letters: newLettersList, languages: newLanguagesList, foundedState: state.foundedState + 1 }
+
+        }
+
         case "RESET_GAME":
             return INITIAL_STATE;
 

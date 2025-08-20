@@ -12,49 +12,26 @@ import { gameReducer, INITIAL_STATE } from "../utils/Hooks/GameReducer";
 export default function GameBody() {
   const [reduceState, dispatch] = React.useReducer(gameReducer, INITIAL_STATE);
 
-  // console.log("reducer:", reduceState.currentWord);
+  console.log("reducer:", reduceState.currentWord);
   const redlistLanguages = reduceState.languages.map((lang) => <Language key={lang.id} {...lang} />);
   const redselectedWord = reduceState.currentWord.map((current) => <FoundLetter key={current.id} {...current} />);
   const redlistLetters = reduceState.letters.map((letter) => <Letter key={letter.id} {...letter} func={() => SwitchButton(letter.id)} />);
-  console.log("redselectedWord:", reduceState.currentWord);
 
   function SwitchButton(id) {
     if (reduceState.foundedState < 8) {
-      reduceState.letters.map((letter) => {
-        const comeredValue = Compare(letter.letter, reduceState.currentWord);
-        if (letter.id === id)
-          dispatch({
-            type: "LETTERS",
-            payload: {
-              ...letter,
-              isOn: !letter.isOn,
-              isFound: letter.isFound !== comeredValue ? comeredValue : letter.isFound,
-            },
-          });
-      });
-      // console.log("after", reduceState.letters);
-
       const clickedLetter = reduceState.letters.find((letter) => letter.id === id);
-
       const comparedLetter = Compare(clickedLetter.letter, reduceState.currentWord);
-      const newFoundedState = reduceState.foundedState + 1;
-      if (comparedLetter === 2) {
-        console.log("asdf", comparedLetter);
-        dispatch({ type: "FOUNDED_STATE" });
-      }
-      if (comparedLetter === 1)
-        reduceState.currentWord.map((current) => {
-          if (comparedLetter === 1 && current.letter === clickedLetter.letter)
-            if (reduceState.foundedState === 8) {
-              if (!current.showLetter) {
-                dispatch({ type: "CURRENT_WORD", payload: { ...current, showLetter: true, color: "#ff0000" } });
-              }
-            } else dispatch({ type: "CURRENT_WORD", payload: { ...current, showLetter: true } });
+      if (comparedLetter === 2)
+        dispatch({
+          type: "LETTER_MISS",
+          id: id,
         });
-
-      reduceState.languages.map((language) => {
-        if (language.id === reduceState.foundedState + 1 && comparedLetter === 2) dispatch({ type: "LANGUAGES", payload: { ...language, found: true } });
-      });
+      else if (comparedLetter === 1)
+        dispatch({
+          type: "LETTER_HIT",
+          id: id,
+          clickedLetter: clickedLetter,
+        });
     }
   }
 
@@ -69,7 +46,6 @@ export default function GameBody() {
   }
 
   function guessWord(word, state) {
-    console.log("asdf", state, word);
     if (state === 8) return <FinishGameText color="#ba2a2a" text="Game over!" message="You lose! Better start learning Assembly 😭" border="none" />;
     if (word) return <FinishGameText color="#10a95b" text="You win!" message="Well done! 🎉" border="none" />;
     if (state > -1 && state < 8) return <FinishGameText color="#7a5ea7" text={getFarewellText(languages[state].name)} message="" border="2px dashed #323232" />;
