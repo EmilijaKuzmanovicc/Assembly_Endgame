@@ -29,35 +29,36 @@ export const gameReducer = (state, action) => {
             }
         case "LETTER_HIT": {
             const newLetters = getNewLetters(state, action.id)
+            console.log((state.foundedWord));
             const newCurrentWord = state.currentWord.map(current => {
                 if (action.clickedLetter.letter === current.letter)
-                    if (state.foundedState === 8) {
-                        if (!current.showLetter)
-                            return { ...current, showLetter: true, color: "#ff0000" }
 
-                    } else
-                        return { ...current, showLetter: true }
+
+                    return { ...current, showLetter: true }
                 return current
             })
-
-
             return { ...state, letters: newLetters, currentWord: newCurrentWord }
-
         }
         case "LETTER_MISS": {
 
             const newLettersList = getNewLetters(state, action.id)
-
             const newLanguagesList = state.languages.map(language => {
                 if (language.id === state.foundedState + 1)
                     return { ...language, found: true }
                 return language
-            }
-            )
-            return { ...state, letters: newLettersList, languages: newLanguagesList, foundedState: state.foundedState + 1 }
+            })
+
+            const newCurrentWord = state.currentWord.map((current) => {
+                if (state.foundedState + 1 === 8) {
+                    if (!current.showLetter) return { ...current, showLetter: true, color: "#ff0000" };
+                }
+                return current;
+
+            });
+
+            return { ...state, letters: newLettersList, languages: newLanguagesList, foundedState: state.foundedState + 1, currentWord: newCurrentWord }
 
         }
-
         case "RESET_GAME":
             return INITIAL_STATE;
 

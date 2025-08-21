@@ -1,5 +1,5 @@
 import Headline from "./components/Headline";
-import GameBody from "./components/GameBody";
+import GameBody from "./GameBody";
 function App() {
   return (
     <>

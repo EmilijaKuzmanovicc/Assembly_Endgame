@@ -1,18 +1,18 @@
 import React, { useEffect } from "react";
-import Language from "./Language";
-import Letter from "./Letter";
-import FoundLetter from "./FoundLetter";
-import FinishGameText from "./FinishGameText";
+import Language from "./components/Language";
+import Letter from "./components/Letter";
+import FoundLetter from "./components/FoundLetter";
+import FinishGameText from "./components/FinishGameText";
 import ReactConfetti from "react-confetti";
-import { languages } from "../data/languages";
-import { getFarewellText } from "../data/utils";
-import Compare from "../utils/Functions/Comare";
-import { gameReducer, INITIAL_STATE } from "../utils/Hooks/GameReducer";
+import { languages } from "./data/languages";
+import { getFarewellText } from "./data/utils";
+import Compare from "./utils/Functions/Comare";
+import { gameReducer, INITIAL_STATE } from "./utils/Hooks/GameReducer";
 
 export default function GameBody() {
   const [reduceState, dispatch] = React.useReducer(gameReducer, INITIAL_STATE);
 
-  console.log("reducer:", reduceState.currentWord);
+  // console.log("reducer:", reduceState.currentWord);
   const redlistLanguages = reduceState.languages.map((lang) => <Language key={lang.id} {...lang} />);
   const redselectedWord = reduceState.currentWord.map((current) => <FoundLetter key={current.id} {...current} />);
   const redlistLetters = reduceState.letters.map((letter) => <Letter key={letter.id} {...letter} func={() => SwitchButton(letter.id)} />);
@@ -25,6 +25,7 @@ export default function GameBody() {
         dispatch({
           type: "LETTER_MISS",
           id: id,
+          clickedLetter: clickedLetter,
         });
       else if (comparedLetter === 1)
         dispatch({
@@ -55,18 +56,13 @@ export default function GameBody() {
   return (
     <div className="game-body">
       {reduceState.foundedWord && reduceState.foundedState < 8 && <ReactConfetti recycle={false} numberOfPieces={2000} className="react-confetti" />}
-
       {guessWord(reduceState.foundedWord, reduceState.foundedState)}
-
       <div className="list-languages">{redlistLanguages}</div>
-
       <div className="list-letters-word">{redselectedWord}</div>
-
       <div className="list-letters">{redlistLetters}</div>
-
       {(reduceState.foundedState === 8 || reduceState.foundedWord) && (
         <button onClick={restartGame} className="new-game-button">
-          New Game
+          New Game{" "}
         </button>
       )}
     </div>
